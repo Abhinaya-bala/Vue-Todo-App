@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import axios from 'axios'
 
 Vue.use(Vuex)
 
@@ -7,18 +8,7 @@ Vue.use(Vuex)
     state:{
         filter:'all',
         todos:[
-            {
-                'id':1,
-                'title':'Finish Vue Todo',
-                'completed':false,
-                'edit':false,
-            },
-            {
-                'id':2,
-                'title':'Finish Vue Todowith Vuex',
-                'completed':false,
-                'edit':false,
-            }
+            
         ]
     },
     getters:{
@@ -45,6 +35,12 @@ Vue.use(Vuex)
 
     },
     mutations: {
+
+      SET_TODOS(state,todos){
+
+        state.todos=todos
+
+      },
         addTodo(state, todo) {
           state.todos.push({
             id: todo.id,
@@ -79,20 +75,43 @@ Vue.use(Vuex)
     },
 
     actions: {
+
+      getTodos(context) {
+            return axios.get(`http://localhost:5000/todos`).then(response => {
+              context.commit("SET_TODOS", response.data.todos); // it will call function in mutation
+            console.log(response)
+              return response;
+            });
+
+          },
+
+      
+
         addTodo(context, todo) {
-          setTimeout(() => {
-            context.commit('addTodo', todo)
-          }, 100)
+          return axios.post(`http://localhost:5000/todos`,todo).then(response=>{
+            console.log(response)
+            return response;
+          })
+            //context.commit('addTodo', todo)
         },
         updateTodo(context, todo) {
-          setTimeout(() => {
-            context.commit('updateTodo', todo)
-          }, 100)
-        },
+
+          return axios.put(`http://localhost:5000/todos/${todo.id}`,todo).then(response => {
+              // it will call function in mutation
+              context.commit('updateTodo', todo)
+           // console.log(todo)
+              return response;
+            });
+          
+             },
+
+
         deleteTodo(context, id) {
-          setTimeout(() => {
-            context.commit('deleteTodo', id)
-          }, 100)
+          return axios.delete(`http://localhost:5000/todos/${id}`).then(response => {
+              context.commit("deleteTodo", id); // it will call function in mutation
+            console.log(response)
+              return response;
+            });
         },
         checkAll(context, checked) {
           setTimeout(() => {
@@ -114,3 +133,19 @@ Vue.use(Vuex)
 })
 
 export default store;
+
+
+
+// actions: {
+//   getConfig(context) {
+//     return api.get(`shopify/config`).then(response => {
+//       context.commit(“SET_CONFIG”, response.config);
+//       context.commit(“SET_STORE”, response.store);
+//       return response;
+//     });
+//   },
+// 8:50
+// mutations: {
+//   SET_CONFIG: (state, payload) => {
+//     state.config = payload;
+//   },

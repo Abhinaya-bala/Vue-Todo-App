@@ -54,6 +54,10 @@ export default {
          
       }
   },
+
+  created(){
+this.$store.dispatch("getTodos")
+  },
   
   computed:{
   
@@ -77,6 +81,9 @@ export default {
         this.$store.dispatch('addTodo',{
           id:this.idForTodo,
             title:this.newTodo,
+            completed:false,
+            edit:false
+
                  
           })
 
